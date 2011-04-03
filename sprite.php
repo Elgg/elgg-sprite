@@ -2,8 +2,28 @@
 /**
  * php sprite -d ~/my_sprite_dir/
  *
- * Will write elgg-sprite.png to current directory along with CSS snippet (sprite.css)
+ * Will write elgg_sprites.png to current directory along with CSS snippet (sprite.css)
  */
+
+function get_icon_name($filename) {
+	$filename = substr($filename, (int)strpos($filename, '/'));
+	$segments = explode('_', $filename);
+	array_pop($segments);
+	$name = implode('-', $segments);
+	$name = str_replace('-hover', ':hover', $name);
+	return "elgg-icon-$name";
+}
+
+function get_css($filename, $offset) {
+	$class = get_icon_name($filename);
+	$css = <<<CSS
+.$class {
+	background-position: 0 -{$offset}px;
+}
+
+CSS;
+	return $css;
+}
 
 $spacing = 2;
 
@@ -37,16 +57,22 @@ if ($handle) {
 	imagesavealpha($image, true);
 
 	sort($image_filenames);
+	$css = '';
 	$offset = 0;
 	foreach ($image_filenames as $filename) {
 		list($width, $height) = getimagesize("$directory/$filename");
 		$sprite = imagecreatefrompng("$directory/$filename");
 
 		imagecopy($image, $sprite, 0, $offset, 0, 0, $width, $height);
+
+		$css .= get_css($filename, $offset);
+		
 		$offset += ($height + $spacing);
 		imagedestroy($sprite);
 	}
 	
-	imagepng($image, "elgg-sprite.png");
+	imagepng($image, "elgg_sprites.png");
 	imagedestroy($image);
+
+	file_put_contents('sprites.css', $css);
 }
