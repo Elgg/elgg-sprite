@@ -1,6 +1,6 @@
 <?php
 /**
- * php sprite -d ~/my_sprite_dir/
+ * php sprite.php -d ~/my_sprite_dir/
  *
  * Will write elgg_sprites.png to current directory along with CSS snippet (sprite.css)
  */
@@ -11,13 +11,26 @@ function get_icon_name($filename) {
 	array_pop($segments);
 	$name = implode('-', $segments);
 	$name = str_replace('-hover', ':hover', $name);
-	return "elgg-icon-$name";
+
+	// ughh - special cases where we are doing double duty with an icon
+	switch ($name) {
+		case 'thumbs-down-alt';
+			$name = ".elgg-icon-thumbs-down:hover,\n.elgg-icon-$name";
+			break;
+		case 'thumbs-up-alt';
+			$name = ".elgg-icon-thumbs-up:hover,\n.elgg-icon-$name";
+			break;
+		default:
+			$name = ".elgg-icon-$name";
+			break;
+	}
+	return $name;
 }
 
 function get_css($filename, $offset) {
 	$class = get_icon_name($filename);
 	$css = <<<CSS
-.$class {
+$class {
 	background-position: 0 -{$offset}px;
 }
 
