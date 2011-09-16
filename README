@@ -1,1 +1,21 @@
 Sprite generator for Elgg
+
+Instructions
+=================
+ 1. Place sprite icons in a directory. They should be named like this:
+<icon name>_icon&16.png for normal icons and <icon name>_hover_icon&16.png
+for hover icons. The "_icon&16.png" section is ignored except that icons
+must end in ".png".
+
+ 2. Run the sprite generation code: php sprite.php -d ~/<my directory/
+This produces the sprite png file and a css file.
+
+ 3. Copy the sprite file over Elgg's sprite image and copy the text from the
+the css file and paste it into the icon css elements view.
+
+
+Gotchas
+================
+The code does not handle icons of different widths. Also, if there are icons
+that are being used for two selectors, these exceptions have to be hard coded
+into the script.
